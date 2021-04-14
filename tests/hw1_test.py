@@ -34,3 +34,20 @@ def test_counter():
     assert response.status_code == 200
     assert response.text == "2"
 
+
+def test_which_method_get():
+    response = client.get(f"/method")
+    assert response.status_code == 200
+    assert response.json() == {"method": "GET"}
+
+
+def test_which_method_post():
+    response = client.post(f"/method")
+    assert response.status_code == 201
+    assert response.json() == {"method": "POST"}
+
+
+def test_which_method_options():
+    response = client.options(f"/method")
+    assert response.status_code == 200
+    assert response.json() == {"method": "OPTIONS"}
