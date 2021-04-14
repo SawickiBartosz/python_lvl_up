@@ -3,3 +3,7 @@ daftacademy
 
 # pyCharm files
 .idea
+
+# pytest chaches
+.pytest_cache
+tests/.pytest_cache
