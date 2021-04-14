@@ -16,6 +16,7 @@ class Person(BaseModel):
 app = FastAPI()
 app.counter = 0
 app.id_counter = 0
+app.people = []
 
 
 @app.get('/counter')
@@ -82,10 +83,12 @@ def vac_register(person: Person):
     vaccination_date = (
                today_date + dt.timedelta(days=len(person.name.strip()) + len(person.surname.strip()))).isoformat()
 
-    return {
+    result = {
         "id": app.id_counter,
         "name": person.name,
         "surname": person.surname,
         "register_date": today_date.isoformat(),
         "vaccination_date": vaccination_date
     }
+    app.people.append(result)
+    return result
