@@ -86,13 +86,14 @@ def vac_register(response: Response, person: Person):
         return num
 
     app.id_counter += 1
+    curr_id = app.id_counter
     today_date = dt.date.today()
     days = count_letters_in_str(person.name) + count_letters_in_str(person.surname)
     vaccination_date = (
             today_date + dt.timedelta(days=days))
 
     result = {
-        "id": app.id_counter,
+        "id": curr_id,
         "name": person.name,
         "surname": person.surname,
         "register_date": today_date.isoformat(),
@@ -102,7 +103,7 @@ def vac_register(response: Response, person: Person):
         response.status_code = 409
         return
     response.status_code = 201
-    app.people.update({app.id_counter: result})
+    app.people.update({curr_id: result})
     return result
 
 

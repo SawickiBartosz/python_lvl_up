@@ -92,6 +92,22 @@ def test_vac_register():
     }
 
 
+def test_vac_register_two_names():
+    body = {
+        "name": "Jan Sebastian",
+        "surname": "Kowalski"
+    }
+    response = client.post('/register', json=body)
+    assert response.status_code == 201
+    assert response.json() == {
+        "id": 2,
+        "name": "Jan Sebastian",
+        "surname": "Kowalski",
+        "register_date": dt.date.today().isoformat(),
+        "vaccination_date": (dt.date.today() + dt.timedelta(days=20)).isoformat()
+    }
+
+
 def test_vac_register_digits():
     body = {
         "name": "Jan1",
@@ -100,7 +116,7 @@ def test_vac_register_digits():
     response = client.post('/register', json=body)
     assert response.status_code == 201
     assert response.json() == {
-        "id": 2,
+        "id": 3,
         "name": "Jan1",
         "surname": "Kowalski",
         "register_date": dt.date.today().isoformat(),
