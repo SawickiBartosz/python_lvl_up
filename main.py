@@ -16,7 +16,7 @@ class Person(BaseModel):
 app = FastAPI()
 app.counter = 0
 app.id_counter = 0
-app.people = []
+app.people = {}
 
 
 @app.get('/counter')
@@ -98,9 +98,21 @@ def vac_register(response: Response, person: Person):
         "register_date": today_date.isoformat(),
         "vaccination_date": vaccination_date.isoformat()
     }
-    if result in app.people:
+    if result in app.people.values():
         response.status_code = 409
         return
     response.status_code = 201
-    app.people.append(result)
+    app.people.update({app.id_counter: result})
     return result
+
+
+@app.get('/patient/{id}')
+def get_patient(id: int, response: Response):
+    if id is None or id < 1:
+        response.status_code = 400
+        return
+
+    if id not in app.people.keys():
+        response.status_code = 404
+        return
+    return app.people.get(id)

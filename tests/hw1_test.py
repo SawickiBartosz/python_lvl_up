@@ -106,3 +106,30 @@ def test_vac_register_digits():
         "register_date": dt.date.today().isoformat(),
         "vaccination_date": (dt.date.today() + dt.timedelta(days=11)).isoformat()
     }
+
+
+def test_patient_simple():
+    body = {
+        "name": "Jan",
+        "surname": "Kowalski"
+    }
+    response = client.post('/register', json=body)
+    response = client.get('/patient/1')
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 1,
+        "name": "Jan",
+        "surname": "Kowalski",
+        "register_date": dt.date.today().isoformat(),
+        "vaccination_date": (dt.date.today() + dt.timedelta(days=11)).isoformat()
+    }
+
+
+def test_patient_not_in_base():
+    response = client.get('/patient/1000')
+    assert response.status_code == 404
+
+
+def test_patient_bad_id():
+    response = client.get('/patient/-2343')
+    assert response.status_code == 400
