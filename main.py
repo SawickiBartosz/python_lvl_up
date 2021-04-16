@@ -1,6 +1,6 @@
 import datetime as dt
 import hashlib
-from fastapi import FastAPI, Response, status
+from fastapi import FastAPI, Response
 from pydantic import BaseModel
 
 
@@ -76,19 +76,31 @@ def check_password(response: Response, password=None, password_hash=None):
         response.status_code = 401
 
 
-@app.post('/register', status_code=201)
-def vac_register(person: Person):
+@app.post('/register')
+def vac_register(response: Response, person: Person):
+    def count_letters_in_str(string):
+        num = 0
+        for char in string:
+            if char.isalpha():
+                num += 1
+        return num
+
     app.id_counter += 1
     today_date = dt.date.today()
+    days = count_letters_in_str(person.name) + count_letters_in_str(person.surname)
     vaccination_date = (
-            today_date + dt.timedelta(days=len(person.name.strip()) + len(person.surname.strip()))).isoformat()
+            today_date + dt.timedelta(days=days))
 
     result = {
         "id": app.id_counter,
         "name": person.name,
         "surname": person.surname,
         "register_date": today_date.isoformat(),
-        "vaccination_date": vaccination_date
+        "vaccination_date": vaccination_date.isoformat()
     }
+    if result in app.people:
+        response.status_code = 409
+        return
+    response.status_code = 201
     app.people.append(result)
     return result

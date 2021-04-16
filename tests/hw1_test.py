@@ -90,3 +90,19 @@ def test_vac_register():
         "register_date": dt.date.today().isoformat(),
         "vaccination_date": (dt.date.today() + dt.timedelta(days=11)).isoformat()
     }
+
+
+def test_vac_register_digits():
+    body = {
+        "name": "Jan1",
+        "surname": "Kowalski"
+    }
+    response = client.post('/register', json=body)
+    assert response.status_code == 201
+    assert response.json() == {
+        "id": 2,
+        "name": "Jan1",
+        "surname": "Kowalski",
+        "register_date": dt.date.today().isoformat(),
+        "vaccination_date": (dt.date.today() + dt.timedelta(days=11)).isoformat()
+    }
