@@ -67,7 +67,7 @@ def which_method_options():
 
 @app.get('/auth')
 def check_password(response: Response, password=None, password_hash=None):
-    if password is None or password_hash is None:
+    if password is None or password_hash is None or password == '' or password_hash == '':
         response.status_code = 401
         return
     if hashlib.sha512(password.encode()).hexdigest() == password_hash:
