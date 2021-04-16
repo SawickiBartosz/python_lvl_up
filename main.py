@@ -50,17 +50,17 @@ def which_method_post():
     return {"method": "POST"}
 
 
-@app.delete('/method')
+@app.delete('/method', status_code=200)
 def which_method_delete():
     return {"method": "DELETE"}
 
 
-@app.put('/method')
+@app.put('/method', status_code=200)
 def which_method_put():
     return {"method": "PUT"}
 
 
-@app.options('/method')
+@app.options('/method', status_code=200)
 def which_method_options():
     return {"method": "OPTIONS"}
 
@@ -81,7 +81,7 @@ def vac_register(person: Person):
     app.id_counter += 1
     today_date = dt.date.today()
     vaccination_date = (
-               today_date + dt.timedelta(days=len(person.name.strip()) + len(person.surname.strip()))).isoformat()
+            today_date + dt.timedelta(days=len(person.name.strip()) + len(person.surname.strip()))).isoformat()
 
     result = {
         "id": app.id_counter,
