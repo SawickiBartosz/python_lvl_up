@@ -113,7 +113,7 @@ def test_patient_simple():
         "name": "Jan",
         "surname": "Kowalski"
     }
-    response = client.post('/register', json=body)
+    client.post('/register', json=body)
     response = client.get('/patient/1')
     assert response.status_code == 200
     assert response.json() == {
