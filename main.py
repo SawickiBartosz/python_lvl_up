@@ -1,6 +1,8 @@
 import datetime as dt
 import hashlib
-from fastapi import FastAPI, Response
+import random
+
+from fastapi import FastAPI, Response, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
@@ -124,3 +126,25 @@ def get_patient(id: int, response: Response):
 @app.get('/hello', response_class=HTMLResponse)
 def hello_html():
     return "<h1>Hello! Today date is " + dt.datetime.today().strftime('%Y-%m-%d') + "</h1>"
+
+
+@app.post('/login_session')
+def login_session(user: str, password: str, response: Response):
+    if user == '4dm1n' and password == 'NotSoSecurePa$$':
+        session_token = str(random.uniform(0, 1))
+        app.session_token = session_token
+        response.set_cookie(key="session_token", value=session_token)
+        response.status_code = 201
+    else:
+        raise HTTPException(status_code=401, detail="Unathorised")
+
+
+@app.post('/login_token')
+def login_session(user: str, password: str, response: Response):
+    if user == '4dm1n' and password == 'NotSoSecurePa$$':
+        token_value = str(random.uniform(0, 1))
+        app.token_value = token_value
+        response.status_code = 201
+        return {"token": token_value}
+    else:
+        raise HTTPException(status_code=401, detail="Unathorised")
