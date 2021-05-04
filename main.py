@@ -191,14 +191,18 @@ def welcome_session(format: str, response: Response, session_token: Optional[str
 
 
 @app.get('/welcome_token')
-def welcome_token(token: str, format: str, response: Response):
+def welcome_token(token: str, format: str):
     if token != app.token_value:
         raise HTTPException(status_code=401, detail="Unathorised")
     if format == 'json':
-        return Response(content={'message': 'Welcome!'}, media_type='application/json')
+        return Response(content={'message': 'Welcome!'},
+                        media_type='application/json',
+                        status_code=200)
     elif format == 'html':
-        return Response(content='<h1>Welcome!</h1>', media_type='text/html')
+        return Response(content='<h1>Welcome!</h1>', media_type='text/html',
+                        status_code=200)
     else:
-        return Response(content='Welcome!', media_type='plain/text')
+        return Response(content='Welcome!', media_type='plain/text',
+                        status_code=200)
 
 
