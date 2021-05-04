@@ -134,7 +134,6 @@ def hello_html():
 
 @app.post('/login_session')
 def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
-    request.headers['WWW-Authenticate']
     session_token = str(random.uniform(0, 1))
     app.session_token = session_token
     response.set_cookie(key="session_token", value=session_token)
@@ -143,8 +142,6 @@ def login_session(response: Response, request: Request, authentication: Optional
 
 @app.post('/login_token')
 def login_token(response: Response, request: Request, authentication: Optional[str] = Header(None)):
-    request.headers['WWW-Authenticate']
-    response.status_code = request.headers['WWW-Authenticate']
     token_value = str(random.uniform(0, 1))
     app.token_value = token_value
     response.status_code = 201
