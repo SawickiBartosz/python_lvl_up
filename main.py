@@ -152,7 +152,7 @@ def login_session(response: Response, request: Request):
         response.set_cookie(key="session_token", value=session_token)
         response.status_code = 201
     else:
-        raise HTTPException(status_code=403, detail="Unathorised")
+        raise HTTPException(status_code=401, detail="Unathorised")
 
 
 @app.post('/login_token')
@@ -172,6 +172,6 @@ def login_token(response: Response, request: Request):
         response.status_code = 201
         return {"token": token_value}
     else:
-        raise HTTPException(status_code=403, detail="Unathorised")
+        raise HTTPException(status_code=401, detail="Unathorised")
 
 
