@@ -1,3 +1,5 @@
+import base64
+import binascii
 import datetime as dt
 import hashlib
 import random
@@ -7,6 +9,7 @@ from fastapi import FastAPI, Response, Request, HTTPException, Header
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from starlette.authentication import AuthenticationError
 
 
 class HelloResp(BaseModel):
@@ -133,18 +136,42 @@ def hello_html():
 
 
 @app.post('/login_session')
-def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
-    raise Exception(authentication)
-    session_token = str(random.uniform(0, 1))
-    app.session_token = session_token
-    response.set_cookie(key="session_token", value=session_token)
-    response.status_code = 201
+def login_session(response: Response, request: Request):
+    auth = request.headers["Authorization"]
+    try:
+        scheme, credentials = auth.split()
+        if scheme.lower() != 'basic':
+            return
+        decoded = base64.b64decode(credentials).decode("ascii")
+    except (ValueError, UnicodeDecodeError, binascii.Error) as exc:
+        raise AuthenticationError('Invalid basic auth credentials')
+    username, _, password = decoded.partition(":")
+    if username == '4dm1n' and password == 'NotSoSecurePa$$':
+        session_token = str(random.uniform(0, 1))
+        app.session_token = session_token
+        response.set_cookie(key="session_token", value=session_token)
+        response.status_code = 201
+    else:
+        raise HTTPException(status_code=403, detail="Unathorised")
 
 
 @app.post('/login_token')
-def login_token(response: Response, request: Request, authentication: Optional[str] = Header(None)):
-    token_value = str(random.uniform(0, 1))
-    app.token_value = token_value
-    response.status_code = 201
-    return {"token": token_value}
+def login_token(response: Response, request: Request):
+    auth = request.headers["Authorization"]
+    try:
+        scheme, credentials = auth.split()
+        if scheme.lower() != 'basic':
+            return
+        decoded = base64.b64decode(credentials).decode("ascii")
+    except (ValueError, UnicodeDecodeError, binascii.Error) as exc:
+        raise AuthenticationError('Invalid basic auth credentials')
+    username, _, password = decoded.partition(":")
+    if username == '4dm1n' and password == 'NotSoSecurePa$$':
+        token_value = str(random.uniform(0, 1))
+        app.token_value = token_value
+        response.status_code = 201
+        return {"token": token_value}
+    else:
+        raise HTTPException(status_code=403, detail="Unathorised")
+
 
