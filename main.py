@@ -5,7 +5,7 @@ import hashlib
 import random
 from typing import Optional
 
-from fastapi import FastAPI, Response, Request, HTTPException, Header
+from fastapi import FastAPI, Response, Request, HTTPException, Header, Cookie
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
@@ -25,6 +25,8 @@ app = FastAPI()
 app.counter = 0
 app.id_counter = 0
 app.people = {}
+app.token_value = ''
+app.session_token = ''
 
 security = HTTPBasic()
 
@@ -173,5 +175,35 @@ def login_token(response: Response, request: Request):
         return {"token": token_value}
     else:
         raise HTTPException(status_code=401, detail="Unathorised")
+
+
+@app.get('/welcome_session')
+def welcome_session(format: str, response: Response, session_token: Optional[str] = Cookie(None)):
+    if session_token != app.session_token:
+        raise HTTPException(status_code=401, detail="Unathorised")
+    if format == 'json':
+        response.headers['content_type'] = 'application/json'
+        return {'message': 'Welcome!'}
+    elif format == 'html':
+        response.headers['content_type'] = 'text/html'
+        return '<h1>Welcome!</h1>'
+    else:
+        response.headers['content_type'] = 'plain'
+        return 'Welcome!'
+
+
+@app.get('/welcome_token')
+def welcome_token(token: str, format: str, response: Response):
+    if token != app.token_value:
+        raise HTTPException(status_code=401, detail="Unathorised")
+    if format == 'json':
+        response.headers['content_type'] = 'application/json'
+        return {'message': 'Welcome!'}
+    elif format == 'html':
+        response.headers['content_type'] = 'text/html'
+        return '<h1>Welcome!</h1>'
+    else:
+        response.headers['content_type'] = 'plain'
+        return 'Welcome!'
 
 
