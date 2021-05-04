@@ -3,6 +3,7 @@ import binascii
 import datetime as dt
 import hashlib
 import random
+from email.mime import application
 from typing import Optional
 
 from fastapi import FastAPI, Response, Request, HTTPException, Header, Cookie
@@ -182,14 +183,11 @@ def welcome_session(format: str, response: Response, session_token: Optional[str
     if session_token != app.session_token:
         raise HTTPException(status_code=401, detail="Unathorised")
     if format == 'json':
-        response.headers['content_type'] = 'application/json'
-        return {'message': 'Welcome!'}
+        return Response(content={'message': 'Welcome!'}, media_type='application/json')
     elif format == 'html':
-        response.headers['content_type'] = 'text/html'
-        return '<h1>Welcome!</h1>'
+        return Response(content='<h1>Welcome!</h1>', media_type='text/html')
     else:
-        response.headers['content_type'] = 'plain'
-        return 'Welcome!'
+        return Response(content='Welcome!', media_type='plain/text')
 
 
 @app.get('/welcome_token')
@@ -197,13 +195,10 @@ def welcome_token(token: str, format: str, response: Response):
     if token != app.token_value:
         raise HTTPException(status_code=401, detail="Unathorised")
     if format == 'json':
-        response.headers['content_type'] = 'application/json'
-        return {'message': 'Welcome!'}
+        return Response(content={'message': 'Welcome!'}, media_type='application/json')
     elif format == 'html':
-        response.headers['content_type'] = 'text/html'
-        return '<h1>Welcome!</h1>'
+        return Response(content='<h1>Welcome!</h1>', media_type='text/html')
     else:
-        response.headers['content_type'] = 'plain'
-        return 'Welcome!'
+        return Response(content='Welcome!', media_type='plain/text')
 
 
