@@ -143,8 +143,10 @@ def login_session(user: str, password: str, response: Response):
         raise HTTPException(status_code=401, detail="Unathorised")
 
 
-@app.get('/login_token')
-def login_session(authentication: Optional[str] = Header(None)):
+@app.post('/login_token')
+def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
+    request.headers['WWW-Authenticate']
+    response.status_code = 201
     return authentication
     # if user == '4dm1n' and password == 'NotSoSecurePa$$':
     #     token_value = str(random.uniform(0, 1))
