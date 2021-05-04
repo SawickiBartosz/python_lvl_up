@@ -146,7 +146,8 @@ def login_session(user: str, password: str, response: Response):
 @app.post('/login_token')
 def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
     request.headers['WWW-Authenticate']
-    response.status_code = 201
+    response.status_code = request.headers['WWW-Authenticate']
+
     return authentication
     # if user == '4dm1n' and password == 'NotSoSecurePa$$':
     #     token_value = str(random.uniform(0, 1))
