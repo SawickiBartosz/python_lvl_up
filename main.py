@@ -134,6 +134,7 @@ def hello_html():
 
 @app.post('/login_session')
 def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
+    raise Exception(authentication)
     session_token = str(random.uniform(0, 1))
     app.session_token = session_token
     response.set_cookie(key="session_token", value=session_token)
