@@ -1,10 +1,12 @@
 import datetime as dt
 import hashlib
 import random
+from typing import Optional
 
-from fastapi import FastAPI, Response, HTTPException
+from fastapi import FastAPI, Response, Request, HTTPException, Header
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 
 class HelloResp(BaseModel):
@@ -20,6 +22,8 @@ app = FastAPI()
 app.counter = 0
 app.id_counter = 0
 app.people = {}
+
+security = HTTPBasic()
 
 
 @app.get('/counter')
@@ -140,11 +144,12 @@ def login_session(user: str, password: str, response: Response):
 
 
 @app.post('/login_token')
-def login_session(user: str, password: str, response: Response):
-    if user == '4dm1n' and password == 'NotSoSecurePa$$':
-        token_value = str(random.uniform(0, 1))
-        app.token_value = token_value
-        response.status_code = 201
-        return {"token": token_value}
-    else:
-        raise HTTPException(status_code=401, detail="Unathorised")
+def login_session(authentication: Optional[str] = Header(None)):
+    return authentication
+    # if user == '4dm1n' and password == 'NotSoSecurePa$$':
+    #     token_value = str(random.uniform(0, 1))
+    #     app.token_value = token_value
+    #     response.status_code = 201
+    #     return {"token": token_value}
+    # else:
+    #     raise HTTPException(status_code=401, detail="Unathorised")
