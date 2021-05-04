@@ -133,26 +133,20 @@ def hello_html():
 
 
 @app.post('/login_session')
-def login_session(user: str, password: str, response: Response):
-    if user == '4dm1n' and password == 'NotSoSecurePa$$':
-        session_token = str(random.uniform(0, 1))
-        app.session_token = session_token
-        response.set_cookie(key="session_token", value=session_token)
-        response.status_code = 201
-    else:
-        raise HTTPException(status_code=401, detail="Unathorised")
+def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
+    request.headers['WWW-Authenticate']
+    session_token = str(random.uniform(0, 1))
+    app.session_token = session_token
+    response.set_cookie(key="session_token", value=session_token)
+    response.status_code = 201
 
 
 @app.post('/login_token')
-def login_session(response: Response, request: Request, authentication: Optional[str] = Header(None)):
+def login_token(response: Response, request: Request, authentication: Optional[str] = Header(None)):
     request.headers['WWW-Authenticate']
     response.status_code = request.headers['WWW-Authenticate']
+    token_value = str(random.uniform(0, 1))
+    app.token_value = token_value
+    response.status_code = 201
+    return {"token": token_value}
 
-    return authentication
-    # if user == '4dm1n' and password == 'NotSoSecurePa$$':
-    #     token_value = str(random.uniform(0, 1))
-    #     app.token_value = token_value
-    #     response.status_code = 201
-    #     return {"token": token_value}
-    # else:
-    #     raise HTTPException(status_code=401, detail="Unathorised")
