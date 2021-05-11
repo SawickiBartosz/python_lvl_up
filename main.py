@@ -460,7 +460,7 @@ def get_orders_of_product(id: int):
         if product is None:
             raise HTTPException(status_code=404)
         orders = cursor.execute("""
-            SELECT o.OrderID, c.CompanyName, od.Quantity, ((1-od.Discount)*od.UnitPrice*od.Quantity)
+            SELECT o.OrderID, c.CompanyName, od.Quantity, round((1-od.Discount)*od.UnitPrice*od.Quantity,2)
             FROM Orders o  
             JOIN [Order Details] od on od.OrderID=o.OrderID
             JOIN Customers c on c.CustomerID=o.CustomerID
