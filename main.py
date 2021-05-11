@@ -449,3 +449,27 @@ def get_product_extended():
                    "category": product[2],
                    "supplier": product[3]} for product in products]
         return {"products_extended": parsed}
+
+
+@app.get("/products/{id}/orders", status_code=200)
+def get_orders_of_product(id: int):
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        product = cursor.execute("SELECT ProductName FROM Products WHERE ProductID = ?", (str(id),)).fetchone()
+        if product is None:
+            raise HTTPException(status_code=404)
+        orders = cursor.execute("""
+            SELECT o.OrderID, c.CompanyName, od.Quantity, ((1-od.Discount)*od.UnitPrice*od.Quantity)
+            FROM Orders o  
+            JOIN [Order Details] od on od.OrderID=o.OrderID
+            JOIN Customers c on c.CustomerID=o.CustomerID
+            WHERE od.ProductID = ?""", (str(id),)).fetchall()
+
+        parsed = [{
+            "id": order[0],
+            "customer": order[1],
+            "quantity": order[2],
+            "total_price": order[3],
+        } for order in orders]
+        return {"orders": parsed}
