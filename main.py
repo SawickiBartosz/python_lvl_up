@@ -386,13 +386,6 @@ def get_customers():
             (COALESCE(Address, '') || ' ' || COALESCE(PostalCode, '') || ' ' || 
             COALESCE(City, '') || ' ' || COALESCE(Country, '')) 
             FROM Customers ORDER BY (CustomerID)""").fetchall()
-        for i, customer in enumerate(customers):
-            customer_list = list(customer)
-            for j, column in enumerate(customer):
-                if column is None:
-                    customer_list[j] = ' '
-            customers[i] = tuple(customer_list)
-
         parsed = [{"id": customer[0],
                    "name": customer[1],
                    "full_address": customer[2]} for customer in customers]
