@@ -385,7 +385,7 @@ def get_customers():
             SELECT CustomerID, CompanyName, 
             (COALESCE(Address, '') || ' ' || COALESCE(PostalCode, '') || ' ' || 
             COALESCE(City, '') || ' ' || COALESCE(Country, '')) 
-            FROM Customers ORDER BY (CustomerID)""").fetchall()
+            FROM Customers ORDER BY UPPER(CustomerID)""").fetchall()
         parsed = [{"id": customer[0],
                    "name": customer[1],
                    "full_address": customer[2]} for customer in customers]
