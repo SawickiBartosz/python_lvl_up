@@ -392,3 +392,18 @@ def get_customers():
         return {
             "customers": parsed
         }
+
+
+@app.get("/products/{id}")
+def get_product(id_: int):
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        product = cursor.execute("""
+               SELECT ProductID, ProductName
+               FROM Products WHERE ProductID=?""", (str(id_),)).fetchone()
+        if product is None:
+            raise HTTPException(status_code=404)
+        parsed = {"id": product[0],
+                  "name": product[1]}
+        return parsed
