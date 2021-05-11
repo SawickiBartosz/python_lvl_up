@@ -395,7 +395,7 @@ def get_customers():
 
         parsed = [{"id": customer[0],
                    "name": customer[1],
-                   "full_address": ' '.join(customer[2:5])} for customer in customers]
+                   "full_address": customer[2]} for customer in customers]
         return {
             "customers": parsed
         }
