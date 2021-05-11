@@ -32,6 +32,10 @@ class Person(BaseModel):
     surname: str
 
 
+class New_category(BaseModel):
+    name: str
+
+
 app = FastAPI()
 app.counter = 0
 app.id_counter = 0
@@ -473,3 +477,43 @@ def get_orders_of_product(id: int):
             "total_price": order[3],
         } for order in orders]
         return {"orders": parsed}
+
+
+@app.post('/categories', status_code=201)
+def post_category(new_cat: New_category):
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        cursor.execute("INSERT INTO Categories (CategoryName) VALUES (?)", (new_cat.name,))
+        connection.commit()
+        result = cursor.execute("SELECT CategoryID, CategoryName FROM Categories WHERE CategoryName=?",
+                                (new_cat.name,)).fetchone()
+        return {"id": result[0],
+                "name": result[1]}
+
+
+@app.put("/categories/{id}", status_code=200)
+def update_category(id: int, new_cat: New_category):
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        cursor.execute("UPDATE Categories SET CategoryName = ? WHERE CategoryID=?", (new_cat.name, id))
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404)
+        connection.commit()
+        result = cursor.execute("SELECT CategoryID, CategoryName FROM Categories WHERE CategoryID=?",
+                                (id,)).fetchone()
+        return {"id": result[0],
+                "name": result[1]}
+
+
+@app.delete("/categories/{id}", status_code=200)
+def delete_category(id: int):
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        cursor.execute("DELETE FROM Categories WHERE CategoryID=?", (id,))
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404)
+        connection.commit()
+        return {"deleted": 1}
