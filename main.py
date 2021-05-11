@@ -383,8 +383,9 @@ def get_customers():
         cursor = connection.cursor()
         customers = cursor.execute("""
             SELECT CustomerID, CompanyName, 
-            (Address || " " || PostalCode || " " || City || " " || Country) 
-            FROM Customers ORDER BY UPPER(CustomerID)""").fetchall()
+            (COALESCE(Address, '') || ' ' || COALESCE(PostalCode, '') || ' ' || 
+            COALESCE(City, '') || ' ' || COALESCE(Country, '')) 
+            FROM Customers ORDER BY (CustomerID)""").fetchall()
         for i, customer in enumerate(customers):
             customer_list = list(customer)
             for j, column in enumerate(customer):
