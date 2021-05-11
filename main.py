@@ -431,3 +431,21 @@ def get_employees(limit: int = 20, offset: int = 0, order: str = "EmployeeID"):
                    "first_name": e[2],
                    "city": e[3]} for e in employees]
         return {"employees": parsed}
+
+
+@app.get("/products_extended")
+def get_product_extended():
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        products = cursor.execute("""
+               SELECT p.ProductID, p.ProductName, c.CategoryName, s.CompanyName FROM Products p  
+               JOIN Categories c on c.CategoryID=p.CategoryID
+               JOIN Suppliers s on s.SupplierID=p.SupplierID
+               ORDER BY ProductID""").fetchall()
+
+        parsed = [{"id": product[0],
+                   "name": product[1],
+                   "category": product[2],
+                   "supplier": product[3]} for product in products]
+        return {"products_extended": parsed}
