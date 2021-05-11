@@ -410,7 +410,7 @@ def get_product(id: int):
 
 
 @app.get("/employees", status_code=200)
-def get_employees(limit: int, offset: int, order: str = "EmployeeID"):
+def get_employees(limit: int = 20, offset: int = 0, order: str = "EmployeeID"):
     if order not in ('first_name', 'last_name', 'city', 'EmployeeID'):
         raise HTTPException(status_code=400)
     if order == 'first_name':
@@ -425,7 +425,7 @@ def get_employees(limit: int, offset: int, order: str = "EmployeeID"):
         employees = cursor.execute("""
                SELECT EmployeeID, LastName, FirstName, City 
                FROM Employees ORDER BY """ + order +
-                                  " LIMIT " + str(limit) + " OFFSET " + str(offset)).fetchall()
+                                   " LIMIT " + str(limit) + " OFFSET " + str(offset)).fetchall()
         parsed = [{"id": e[0],
                    "last_name": e[1],
                    "first_name": e[2],
