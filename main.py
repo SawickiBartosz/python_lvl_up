@@ -407,3 +407,27 @@ def get_product(id: int):
         parsed = {"id": product[0],
                   "name": product[1]}
         return parsed
+
+
+@app.get("/employees", status_code=200)
+def get_employees(limit: int, offset: int, order: str = "EmployeeID"):
+    if order not in ('first_name', 'last_name', 'city', 'EmployeeID'):
+        raise HTTPException(status_code=400)
+    if order == 'first_name':
+        order = "FirstName"
+    elif order == 'last_name':
+        order = "LastName"
+    elif order == "city":
+        order = "City"
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        employees = cursor.execute("""
+               SELECT EmployeeID, LastName, FirstName, City 
+               FROM Employees ORDER BY """ + order +
+                                  " LIMIT " + str(limit) + " OFFSET " + str(offset)).fetchall()
+        parsed = [{"id": e[0],
+                   "last_name": e[1],
+                   "first_name": e[2],
+                   "city": e[3]} for e in employees]
+        return {"employees": parsed}
