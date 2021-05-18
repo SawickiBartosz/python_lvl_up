@@ -563,3 +563,8 @@ async def get_suppliers_products(id: PositiveInt, db: Session = Depends(get_db))
     if not db_products:
         raise HTTPException(status_code=404, detail="SupplierID not found")
     return db_products
+
+
+@app.post("/suppliers", response_model=schemas.PostedSupplier, status_code=201)
+async def post_supplier(supplier: schemas.RecivedSupplier,  db: Session = Depends(get_db)):
+    crud.post_supplier(db, supplier)

@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import insert
 
 from sql_app import models
 
@@ -33,3 +34,10 @@ def get_suppliers_products(db: Session, supplier_id: int):
            ).filter(models.Supplier.SupplierID == supplier_id). \
         order_by(models.Product.ProductID.desc())
     return products.all()
+
+
+def post_supplier(db: Session, new_supplier):
+    _in = insert(models.Supplier).values(**new_supplier.dict()).returning(models.Supplier)
+    out = db.execute(_in)
+    db.commit()
+    return next(out)
