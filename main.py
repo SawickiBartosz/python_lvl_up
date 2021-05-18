@@ -28,7 +28,7 @@ from pydantic import BaseModel, PositiveInt
 from starlette.authentication import AuthenticationError
 
 from sql_app.database import get_db
-from sql_app.views import router as northwind_api_router
+from sql_app.views import router
 
 
 
@@ -53,7 +53,7 @@ app.people = {}
 app.token_value = ''
 app.session_token = ''
 
-app.include_router(northwind_api_router, tags=["northwind"])
+app.include_router(router, tags=["northwind"])
 
 security = HTTPBasic()
 
