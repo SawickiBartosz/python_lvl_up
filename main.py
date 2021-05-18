@@ -21,10 +21,7 @@ from fastapi.responses import (
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel
 from starlette.authentication import AuthenticationError
-import os
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from views import router as northwind_api_router
 
