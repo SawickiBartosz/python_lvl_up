@@ -555,3 +555,11 @@ async def get_suppliers(id: PositiveInt, db: Session = Depends(get_db)):
     if not db_supplier:
         raise HTTPException(status_code=404, detail="SupplierID not found")
     return db_supplier
+
+
+@app.get("/suppliers/{id}/products", response_model=List[schemas.Product])
+async def get_suppliers_products(id: PositiveInt, db: Session = Depends(get_db)):
+    db_products = crud.get_suppliers_products(db, id)
+    if not db_products:
+        raise HTTPException(status_code=404, detail="SupplierID not found")
+    return db_products

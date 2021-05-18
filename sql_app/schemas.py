@@ -44,3 +44,33 @@ class SupplierShort(BaseModel):
         orm_mode = True
 
 
+class SupplierPost(BaseModel):
+    CompanyName: constr(max_length=40)
+    ContactName: Optional[constr(max_length=30)] = None
+    ContactTitle: Optional[constr(max_length=30)] = None
+    Address: Optional[constr(max_length=60)] = None
+    City: Optional[constr(max_length=15)] = None
+    PostalCode: Optional[constr(max_length=10)] = None
+    Country: Optional[constr(max_length=15)] = None
+    Phone: Optional[constr(max_length=24)] = None
+
+    class Config:
+        orm_mode = True
+
+
+class CategoryNameID(BaseModel):
+    CategoryID:PositiveInt
+    CategoryName:constr(max_length=40)
+
+    class Config:
+        orm_mode = True
+
+
+class Product(BaseModel):
+    ProductID: PositiveInt
+    ProductName: constr(max_length=40)
+    Category: Optional[CategoryNameID]
+    Discontinued: int
+
+    class Config:
+        orm_mode = True
