@@ -542,3 +542,8 @@ async def get_shipper(shipper_id: PositiveInt, db: Session = Depends(get_db)):
 @app.get("/shippers", response_model=List[schemas.Shipper])
 async def get_shippers(db: Session = Depends(get_db)):
     return crud.get_shippers(db)
+
+
+@app.get("/suppliers", response_model=List[schemas.SupplierShort])
+async def get_shippers(db: Session = Depends(get_db)):
+    return crud.get_shippers(db)
