@@ -11,6 +11,9 @@ from datetime import datetime
 from hashlib import sha512
 from typing import Optional
 
+from sqlalchemy.orm import Session
+
+import crud
 from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import (
     HTMLResponse,
@@ -19,10 +22,11 @@ from fastapi.responses import (
     RedirectResponse,
 )
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt
 from starlette.authentication import AuthenticationError
 
-
+import schemas
+from database import get_db
 from views import router as northwind_api_router
 
 
@@ -522,4 +526,12 @@ def delete_category(id: int):
             raise HTTPException(status_code=404)
         connection.commit()
         return {"deleted": 1}
+
+
+@app.get("/shippers/{shipper_id}", response_model=schemas.Shipper)
+async def get_shipper(shipper_id: PositiveInt, db: Session = Depends(get_db)):
+    db_shipper = crud.get_shipper(db, shipper_id)
+    if db_shipper is None:
+        raise HTTPException(status_code=404, detail="Shipper not found")
+    return db_shipper
 
