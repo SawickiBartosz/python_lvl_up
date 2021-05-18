@@ -1,6 +1,11 @@
 from pydantic import BaseModel, PositiveInt, constr
 
 
+class ConfigSchema(BaseModel):
+    class Config:
+        orm_mode = True
+
+
 class Shipper(BaseModel):
     ShipperID: PositiveInt
     CompanyName: constr(max_length=40)
@@ -28,9 +33,6 @@ class Supplier(BaseModel):
         orm_mode = True
 
 
-class SupplierShort(BaseModel):
-    SupplierID = PositiveInt
-    CompanyName = constr(max_length=40)
-
-    class Config:
-        orm_mode = True
+class SupplierIdName(ConfigSchema):
+    SupplierID: PositiveInt
+    CompanyName: constr(max_length=40)
