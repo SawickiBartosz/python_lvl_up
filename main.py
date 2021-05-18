@@ -31,21 +31,7 @@ import schemas
 from database import get_db
 from views import router as northwind_api_router
 
-result = urlparse(os.getenv("SQLALCHEMY_DATABASE_URL"))
 
-username = result.username
-password = result.password
-database = result.path[1:]
-hostname = result.hostname
-port = result.port
-ps_conn = psycopg2.connect(
-    database=database,
-    user=username,
-    password=password,
-    host=hostname,
-    port=port
-)
-cursor = ps_conn.cursor()
 
 
 class HelloResp(BaseModel):
@@ -547,7 +533,22 @@ def delete_category(id: int):
 
 
 @app.get("/suppliers/{supplier_id}", response_model=schemas.Supplier)
-async def get_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
+async def get_supplier(supplier_id: PositiveInt):
+    result = urlparse(os.getenv("SQLALCHEMY_DATABASE_URL"))
+
+    username = result.username
+    password = result.password
+    database = result.path[1:]
+    hostname = result.hostname
+    port = result.port
+    ps_conn = psycopg2.connect(
+        database=database,
+        user=username,
+        password=password,
+        host=hostname,
+        port=port
+    )
+    cursor = ps_conn.cursor()
     db_supplier = cursor.execute('SELECT * FROM Suppliers WHERE SupplierId=?', (supplier_id,)).fetchone()
     if db_supplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
@@ -565,6 +566,8 @@ async def get_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
         "Fax":db_supplier[10],
         "HomePage": db_supplier[11],
     }
+    cursor.close()
+    ps_conn.close()
     return parsed
 
 
