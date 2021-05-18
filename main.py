@@ -517,3 +517,49 @@ def delete_category(id: int):
             raise HTTPException(status_code=404)
         connection.commit()
         return {"deleted": 1}
+
+
+@app.get("/suppliers", status_code=200)
+def get_suppliers():
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        suppliers = cursor.execute("""
+        SELECT SupplierID, CompanyName 
+        FROM Suppliers 
+        ORDER BY SupplierID
+        """).fetchall()
+        parsed = [{"SupplierID": s[0],
+                   "CompanyName": s[1]} for s in suppliers]
+        return parsed
+
+
+@app.get("/suppliers/{id}", status_code=200)
+def get_supplier_by_id(id: int):
+    with sqlite3.connect("northwind.db") as connection:
+        connection.text_factory = lambda b: b.decode(errors="ignore")
+        cursor = connection.cursor()
+        supplier = cursor.execute("""
+        SELECT * 
+        FROM Suppliers 
+        WHERE SupplierID=?
+        """, (id,)).fetchone()
+        if supplier is None:
+            raise HTTPException(status_code=404)
+        return {
+            "SupplierID": supplier[0],
+            "CompanyName": supplier[1],
+            "ContactName": supplier[2],
+            "ContactTitle": supplier[3],
+            "Address": supplier[4],
+            "City": supplier[5],
+            "Region": supplier[6],
+            "PostalCode": supplier[7],
+            "Country": supplier[8],
+            "Phone": supplier[9],
+            "Fax": supplier[10],
+            "HomePage": supplier[11],
+        }
+
+
+
