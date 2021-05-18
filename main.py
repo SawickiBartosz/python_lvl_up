@@ -2,15 +2,17 @@ import base64
 import binascii
 import datetime as dt
 import hashlib
+import os
 import random
 import secrets
 import sqlite3
+import psycopg2
 import uuid
 from contextlib import contextmanager
 from datetime import datetime
 from hashlib import sha512
 from typing import Optional, List
-
+from urllib.parse import urlparse
 from sqlalchemy.orm import Session
 
 import crud
@@ -28,6 +30,22 @@ from starlette.authentication import AuthenticationError
 import schemas
 from database import get_db
 from views import router as northwind_api_router
+
+result = urlparse(os.getenv("SQLALCHEMY_DATABASE_URL"))
+
+username = result.username
+password = result.password
+database = result.path[1:]
+hostname = result.hostname
+port = result.port
+ps_conn = psycopg2.connect(
+    database=database,
+    user=username,
+    password=password,
+    host=hostname,
+    port=port
+)
+cursor = ps_conn.cursor()
 
 
 class HelloResp(BaseModel):
@@ -530,10 +548,24 @@ def delete_category(id: int):
 
 @app.get("/suppliers/{supplier_id}", response_model=schemas.Supplier)
 async def get_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
-    db_supplier = crud.get_supplier(db, supplier_id)
+    db_supplier = cursor.execute('SELECT * FROM Suppliers WHERE SupplierId=?', (supplier_id,)).fetchone()
     if db_supplier is None:
         raise HTTPException(status_code=404, detail="Supplier not found")
-    return db_supplier
+    parsed = {
+        "SupplierID": db_supplier[0],
+        "CompanyName": db_supplier[1],
+        "ContactName": db_supplier[2],
+        "ContactTitle": db_supplier[3],
+        "Address": db_supplier[4],
+        "City": db_supplier[5],
+        "Region": db_supplier[6],
+        "PostalCode": db_supplier[7],
+        "Country": db_supplier[8],
+        "Phone": db_supplier[9],
+        "Fax":db_supplier[10],
+        "HomePage": db_supplier[11],
+    }
+    return parsed
 
 
 @app.get("/suppliers", response_model=List[schemas.SupplierShort])
