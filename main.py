@@ -15,7 +15,7 @@ from typing import Optional, List
 from urllib.parse import urlparse
 from sqlalchemy.orm import Session
 
-import crud
+from sql_app import crud, schemas
 from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import (
     HTMLResponse,
@@ -27,9 +27,8 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel, PositiveInt
 from starlette.authentication import AuthenticationError
 
-import schemas
-from database import get_db
-from views import router as northwind_api_router
+from sql_app.database import get_db
+from sql_app.views import router as northwind_api_router
 
 
 

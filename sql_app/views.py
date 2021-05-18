@@ -4,9 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import PositiveInt
 from sqlalchemy.orm import Session
 
-import crud
-import schemas
-from database import get_db
+from sql_app import crud, schemas
+from sql_app.database import get_db
 
 router = APIRouter()
 
