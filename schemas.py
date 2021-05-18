@@ -26,3 +26,11 @@ class Supplier(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SupplierShort(BaseModel):
+    SupplierID = PositiveInt
+    CompanyName = constr(max_length=40)
+
+    class Config:
+        orm_mode = True
