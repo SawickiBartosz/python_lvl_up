@@ -10,7 +10,6 @@ from sql_app.database import get_db
 router = APIRouter()
 
 
-@router.get("/shippers/{shipper_id}", response_model=schemas.Shipper)
 async def get_shipper(shipper_id: PositiveInt, db: Session = Depends(get_db)):
     db_shipper = crud.get_shipper(db, shipper_id)
     if db_shipper is None:
@@ -18,6 +17,5 @@ async def get_shipper(shipper_id: PositiveInt, db: Session = Depends(get_db)):
     return db_shipper
 
 
-@router.get("/shippers", response_model=List[schemas.Shipper])
 async def get_shippers(db: Session = Depends(get_db)):
     return crud.get_shippers(db)

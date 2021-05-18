@@ -14,7 +14,7 @@ def get_shipper(db: Session, shipper_id: int):
 
 
 def get_suppliers(db: Session):
-    return db.query(models.Supplier).all().order_by(models.Supplier.SupplierID)
+    return db.query(models.Supplier.SupplierID, models.Supplier.CompanyName).order_by(models.Supplier.SupplierID).all()
 
 
 def get_supplier(db: Session, supplier_id: int):

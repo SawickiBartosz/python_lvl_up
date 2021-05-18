@@ -546,4 +546,12 @@ async def get_shippers(db: Session = Depends(get_db)):
 
 @app.get("/suppliers", response_model=List[schemas.SupplierIdName])
 async def get_suppliers(db: Session = Depends(get_db)):
-    return crud.get_shippers(db)
+    return crud.get_suppliers(db)
+
+
+@app.get("/suppliers/{id}", response_model=schemas.SupplierAll)
+async def get_suppliers(id: PositiveInt, db: Session = Depends(get_db)):
+    db_supplier = crud.get_supplier(db, id)
+    if not db_supplier:
+        raise HTTPException(status_code=404, detail="SupplierID not found")
+    return db_supplier
