@@ -528,7 +528,7 @@ def delete_category(id: int):
         return {"deleted": 1}
 
 
-@app.get("/suppliers/{supplier_id}", response_model=schemas.Shipper)
+@app.get("/suppliers/{supplier_id}", response_model=schemas.Supplier)
 async def get_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
     db_supplier = crud.get_supplier(db, supplier_id)
     if db_supplier is None:
