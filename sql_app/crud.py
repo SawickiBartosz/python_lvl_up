@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-import models
+from sql_app import models
 
 
 def get_shippers(db: Session):
