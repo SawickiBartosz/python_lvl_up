@@ -42,6 +42,6 @@ def post_suppliers(supplier, db: Session):
     db_insert = (
         insert(models.Supplier).values(**vals).returning(models.Supplier)
     )
-    result = db.execute(db_insert).fetchall()
+    result = db.execute(db_insert)
     db.commit()
-    return result[0]
+    return next(result)
