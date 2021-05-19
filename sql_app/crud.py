@@ -38,6 +38,7 @@ def get_suppliers_products(db: Session, supplier_id: int):
 
 def post_suppliers(supplier, db: Session):
     vals = supplier.dict(exclude_none=True)
+    vals['SupplierID'] = 123
     print(vals)
     db_insert = (
         insert(models.Supplier).values(**vals).returning(models.Supplier)
