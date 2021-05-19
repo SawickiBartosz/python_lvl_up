@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import insert
+from sqlalchemy import insert, update
 
 from sql_app import models
 
@@ -43,5 +43,16 @@ def post_suppliers(supplier, db: Session):
         insert(models.Supplier).values(**vals).returning(models.Supplier)
     )
     result = db.execute(db_insert)
+    db.commit()
+    return next(result)
+
+
+def put_supplier(supplier_id: int, supplier, db: Session):
+    db_update = (
+        update(models.Supplier).
+        where(models.Supplier.SupplierID == supplier_id).
+        values(**supplier.dict(exclude_none=True)).returning(models.Supplier)
+    )
+    result = db.execute(db_update)
     db.commit()
     return next(result)

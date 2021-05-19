@@ -84,3 +84,7 @@ class SupplierAdded(SupplierPost):
     SupplierID: PositiveInt
     Fax: Optional[constr(max_length=24)] = None
     HomePage: Optional[str] = None
+
+
+class SupplierToUpdate(SupplierPost):
+    CompanyName: Optional[constr(max_length=40)]

@@ -31,8 +31,6 @@ from sql_app.database import get_db
 from sql_app.views import router
 
 
-
-
 class HelloResp(BaseModel):
     msg: str
 
@@ -568,3 +566,14 @@ async def get_suppliers_products(id: PositiveInt, db: Session = Depends(get_db))
 @app.post("/suppliers", response_model=schemas.SupplierAdded, status_code=201)
 async def post_supplier(supplier: schemas.SupplierToAdd, db: Session = Depends(get_db)):
     return crud.post_suppliers(supplier, db)
+
+
+@app.put("/suppliers/{supplier_id}", response_model=schemas.SupplierAdded)
+async def put_supplier(supplier_id: PositiveInt, supplier: schemas.SupplierToUpdate, db: Session = Depends(get_db)):
+    exists_supp = crud.get_supplier(db, supplier_id)
+    if not exists_supp:
+        raise HTTPException(status_code=404, detail="SupplierID not found")
+    if supplier.dict(exclude_none=True):
+        return crud.put_supplier(supplier_id, supplier, db)
+    else:
+        return exists_supp
