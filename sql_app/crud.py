@@ -1,7 +1,7 @@
 import random
 
 from sqlalchemy.orm import Session
-from sqlalchemy import insert, update
+from sqlalchemy import insert, update, delete
 
 from sql_app import models
 
@@ -40,7 +40,7 @@ def get_suppliers_products(db: Session, supplier_id: int):
 
 def post_suppliers(supplier, db: Session):
     vals = supplier.dict(exclude_none=True)
-    vals['SupplierID'] = random.randint(1000,2000)
+    vals['SupplierID'] = random.randint(1000, 2000)
     print(vals)
     db_insert = (
         insert(models.Supplier).values(**vals).returning(models.Supplier)
@@ -54,9 +54,18 @@ def put_supplier(supplier_id: int, supplier, db: Session):
     vals = supplier.dict(exclude_none=True)
     db_update = (
         update(models.Supplier).
-        where(models.Supplier.SupplierID == supplier_id).
-        values(**vals).returning(models.Supplier)
+            where(models.Supplier.SupplierID == supplier_id).
+            values(**vals).returning(models.Supplier)
     )
     result = db.execute(db_update)
     db.commit()
     return next(result)
+
+
+def del_supplier(supplier_id: int, db: Session):
+    db_del = (
+        delete(models.Supplier).
+            where(models.Supplier.SupplierID == supplier_id).returning(models.Supplier.SupplierID)
+    )
+    result = db.execute(db_del)
+    db.commit()

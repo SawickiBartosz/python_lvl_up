@@ -577,3 +577,12 @@ async def put_supplier(supplier_id: PositiveInt, supplier: schemas.SupplierToUpd
         return crud.put_supplier(supplier_id, supplier, db)
     else:
         return exists_supp
+
+
+@app.delete("/suppliers/{supplier_id}", status_code=204)
+async def delete_supplier(supplier_id: PositiveInt, db: Session = Depends(get_db)):
+    exists_supp = crud.get_supplier(db, supplier_id)
+    if not exists_supp:
+        raise HTTPException(status_code=404, detail="SupplierID not found")
+
+    crud.del_supplier(supplier_id, db)
