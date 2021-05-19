@@ -76,18 +76,8 @@ class SupplierPost(BaseModel):
         orm_mode = True
 
 
-class SupplierToAdd(BaseModel):
-    CompanyName: constr(max_length=40)
-    ContactName: Optional[constr(max_length=30)] = None
-    ContactTitle: Optional[constr(max_length=30)] = None
-    Address: Optional[constr(max_length=60)] = None
-    City: Optional[constr(max_length=15)] = None
-    PostalCode: Optional[constr(max_length=10)] = None
-    Country: Optional[constr(max_length=15)] = None
-    Phone: Optional[constr(max_length=24)] = None
-
-    class Config:
-        orm_mode = True
+class SupplierToAdd(SupplierPost):
+    pass
 
 
 class SupplierAdded(SupplierPost):
