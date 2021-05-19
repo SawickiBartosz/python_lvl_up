@@ -567,4 +567,4 @@ async def get_suppliers_products(id: PositiveInt, db: Session = Depends(get_db))
 
 @app.post("/suppliers", response_model=schemas.SupplierAdded, status_code=201)
 async def post_supplier(supplier: schemas.SupplierToAdd, db: Session = Depends(get_db)):
-    return crud.post_supplier(supplier, db)
+    return crud.post_suppliers(supplier, db)

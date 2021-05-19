@@ -36,10 +36,10 @@ def get_suppliers_products(db: Session, supplier_id: int):
     return products.all()
 
 
-def post_supplier(new_supplier, db: Session):
-    _ins = (
-        insert(models.Supplier).values(**new_supplier.dict()).returning(models.Supplier)
+def post_suppliers(supplier, db: Session):
+    db_insert = (
+        insert(models.Supplier).values(**supplier.dict(exclude_none=True)).returning(models.Supplier)
     )
-    out = db.execute(_ins)
+    result = db.execute(db_insert)
     db.commit()
-    return next(out)
+    return next(result)
